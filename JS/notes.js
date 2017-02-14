@@ -22,7 +22,7 @@ var notes = (function () {
 		}
 	},
 	createNote = function createNote(data) {
-		data = data || { id : +new Date(), top : "70px", left : "40px", name:"Note name", text : "Note text" };
+		data = data || { id : +new Date(), name:"Note name", text : "Note text" };
 
 		return $("<div />", {
 			"class" : "note",
@@ -52,9 +52,7 @@ var notes = (function () {
 				keypress : markUnsaved
  			}))
 		.css({
-			position: "relative",
-			"top" : data.top,
-			"left": data.left
+			position: "relative"
 		})
 		.focusout(saveNote)
 		.appendTo(document.body);
@@ -67,8 +65,6 @@ var notes = (function () {
 		var that = $(this),  note = (that.hasClass("note-status") || that.hasClass("note-content") || that.hasClass("note-name")) ? that.parents('div.note'): that,
 				obj = {
 					id  : note.attr("id"),
-					top : note.css("top"),
-					left: note.css("left"),
 					name: note.children(".note-name").html(),
 					text: note.children(".note-content").html()				};
 		localStorage.setItem("note-" + obj.id, JSON.stringify(obj));
