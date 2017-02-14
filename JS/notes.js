@@ -1,4 +1,12 @@
 var notes = (function () {
+	$('#quantity').keyup(function(){
+  var Value = $('#quantity').val();
+	console.log(Value);
+	if (Value) {
+
+		searchNote(Value);
+	}
+});
 	var initNotes = function initNotes() {
 		$("<div />", {
 			text : "New Note",
@@ -14,7 +22,7 @@ var notes = (function () {
 		}
 	},
 	createNote = function createNote(data) {
-		data = data || { id : +new Date(), top : "70px", left : "40px", name:"Note name", text : "Note text" }
+		data = data || { id : +new Date(), top : "70px", left : "40px", name:"Note name", text : "Note text" };
 
 		return $("<div />", {
 			"class" : "note",
@@ -62,14 +70,17 @@ var notes = (function () {
 					top : note.css("top"),
 					left: note.css("left"),
 					name: note.children(".note-name").html(),
-					text: note.children(".note-content").html()				}
+					text: note.children(".note-content").html()				};
 		localStorage.setItem("note-" + obj.id, JSON.stringify(obj));
 		note.find(".note-status").text("saved");
 	},
 	markUnsaved = function markUnsaved() {
 		var that = $(this), note = that.hasClass("note-content") ? that.parents("div.note") : that;
 		note.find(".note-status").text("press to save");
-	}
+	};
+	searchNote = function() {
+
+	};
 	return {
 		open   : openNotes,
 		init   : initNotes,
