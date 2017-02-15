@@ -1,10 +1,12 @@
 var notes = (function () {
-	$('#quantity').keyup(function(){
-  var Value = $('#quantity').val();
-	console.log(Value);
-	if (Value) {
-
-		searchNote(Value);
+	$('#searchField').keyup(function(){
+  var value = $('#searchField').val();
+	if (value !== null) {
+		searchNote(value);
+		console.log(value);
+	}
+	else if (value === null) {
+		initNotes();
 	}
 });
 	var initNotes = function initNotes() {
@@ -15,15 +17,16 @@ var notes = (function () {
 		}).prependTo(document.body);
 		initNotes = null;
 	},
+
 	openNotes = function openNotes() {
 		initNotes && initNotes();
 		for (var i = 0; i < localStorage.length; i++) {
 			createNote(JSON.parse(localStorage.getItem(localStorage.key(i))));
 		}
 	},
+
 	createNote = function createNote(data) {
 		data = data || { id : +new Date(), name:"Note name", text : "Note text" };
-
 		return $("<div />", {
 			"class" : "note",
 			'id' : data.id
@@ -57,10 +60,12 @@ var notes = (function () {
 		.focusout(saveNote)
 		.appendTo(document.body);
 	},
+
 	deleteNote = function deleteNote(id) {
 		localStorage.removeItem("note-" + id);
 		$("#" + id).fadeOut(200, function () { $(this).remove(); });
 	},
+
 	saveNote = function saveNote() {
 		var that = $(this),  note = (that.hasClass("note-status") || that.hasClass("note-content") || that.hasClass("note-name")) ? that.parents('div.note'): that,
 				obj = {
@@ -70,13 +75,27 @@ var notes = (function () {
 		localStorage.setItem("note-" + obj.id, JSON.stringify(obj));
 		note.find(".note-status").text("saved");
 	},
+
+	searchNote = function searchNote(input) {
+		for (i = 0; i < localStorage.length; i++ ) {
+			var obj = JSON.parse(localStorage.getItem(localStorage.key(i)));
+			var nameStr =obj.name;
+			if(nameStr.search(input) < 0) {
+				hideNote(i);
+			}
+		}
+	},
+
+	hideNote = function functionName(hideNum) {
+		var obj = JSON.parse(localStorage.getItem(localStorage.key(hideNum)));
+    $('#'+obj.id ).hide();
+	},
+
 	markUnsaved = function markUnsaved() {
 		var that = $(this), note = that.hasClass("note-content") ? that.parents("div.note") : that;
 		note.find(".note-status").text("press to save");
 	};
-	searchNote = function() {
 
-	};
 	return {
 		open   : openNotes,
 		init   : initNotes,
