@@ -1,14 +1,11 @@
-var notes = (function () {
+var notes = (function () { //назначаем функцию переменной и сразу ее запускаем.
 	$('#searchField').keyup(function(){
-  var value = $('#searchField').val();
-	if (value !== null) {
-		searchNote(value);
-		console.log(value);
-	}
-	else if (value === null) {
-		initNotes();
-	}
-});
+  	var value = $('#searchField').val();
+		if (value !== null) {
+			searchNote(value.toLowerCase());
+		}
+	});
+
 	var initNotes = function initNotes() {
 		$("<div />", {
 			text : "New Note",
@@ -67,39 +64,48 @@ var notes = (function () {
 	},
 
 	saveNote = function saveNote() {
-		var that = $(this),  note = (that.hasClass("note-status") || that.hasClass("note-content") || that.hasClass("note-name")) ? that.parents('div.note'): that,
-				obj = {
-					id  : note.attr("id"),
-					name: note.children(".note-name").html(),
-					text: note.children(".note-content").html()				};
+		var that = $(this),
+		note = (that.hasClass("note-status") || that.hasClass("note-content") || that.hasClass("note-name")) ? that.parents('div.note'): that,
+		obj = {
+			id  : note.attr("id"),
+			name: note.children(".note-name").html(),
+			text: note.children(".note-content").html()				
+		};
 		localStorage.setItem("note-" + obj.id, JSON.stringify(obj));
 		note.find(".note-status").text("saved");
 	},
 
 	searchNote = function searchNote(input) {
 		for (i = 0; i < localStorage.length; i++ ) {
-			var obj = JSON.parse(localStorage.getItem(localStorage.key(i)));
-			var nameStr =obj.name;
+			var obj = JSON.parse(localStorage.getItem(localStorage.key(i))),
+			nameStr =obj.name.toLowerCase();
 			if(nameStr.search(input) < 0) {
 				hideNote(i);
+			} else {
+				showNote(i);
 			}
 		}
 	},
 
-	hideNote = function functionName(hideNum) {
+	hideNote = function hideNote(hideNum) {
 		var obj = JSON.parse(localStorage.getItem(localStorage.key(hideNum)));
-    $('#'+obj.id ).hide();
+		var elemHide = document.getElementById(obj.id);
+	 	elemHide.style.display = 'none';
+	},
+
+	showNote = function showNote(showNum) {
+		var obj = JSON.parse(localStorage.getItem(localStorage.key(showNum)));
+		var elemShow = document.getElementById(obj.id);
+	 	elemShow.style.display = 'block';
 	},
 
 	markUnsaved = function markUnsaved() {
-		var that = $(this), note = that.hasClass("note-content") ? that.parents("div.note") : that;
+		var that = $(this),
+		note = that.hasClass("note-content") ? that.parents("div.note") : that;
 		note.find(".note-status").text("press to save");
 	};
 
 	return {
-		open   : openNotes,
-		init   : initNotes,
-		"new"  : createNote,
-		remove : deleteNote
+		open   : openNotes
 	};
 }());
